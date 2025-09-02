@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -17,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
 
     @Bean
@@ -33,6 +35,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .successHandler(authenticationSuccessHandler)
                 )
                 .authenticationProvider(authenticationProvider)
         ;
