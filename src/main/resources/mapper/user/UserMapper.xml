@@ -3,4 +3,45 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.spring.springsecuritydemo.mapper.user.UserMapper">
+    <insert id="userInsert">
+        INSERT INTO account
+        (
+            username,
+            password,
+            age,
+            roles
+        )
+        VALUES
+        (
+            #{username},
+            #{password},
+            #{age},
+            #{roles}
+        )
+    </insert>
+
+    <select id="getByAccountId" resultType="long">
+        SELECT id
+        FROM account
+        WHERE username = #{username}
+    </select>
+
+    <select id="getByRoleId" resultType="long">
+        SELECT id
+        FROM role
+        WHERE role_name = #{roles}
+    </select>
+
+    <insert id="roleLogInsert">
+        INSERT INTO account_roles
+        (
+            account_id,
+            role_id
+        )
+        VALUES
+        (
+            #{accountId},
+            #{roleId}
+        )
+    </insert>
 </mapper>
