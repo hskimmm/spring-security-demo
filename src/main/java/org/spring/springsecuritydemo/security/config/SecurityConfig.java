@@ -1,6 +1,7 @@
 package org.spring.springsecuritydemo.security.config;
 
 import lombok.RequiredArgsConstructor;
+import org.spring.springsecuritydemo.security.handler.FormAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -40,6 +41,9 @@ public class SecurityConfig {
                         .failureHandler(authenticationFailureHandler)
                 )
                 .authenticationProvider(authenticationProvider)
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(new FormAccessDeniedHandler("/denied"))
+                )
         ;
         return http.build();
     }
