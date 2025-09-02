@@ -44,4 +44,15 @@
             #{roleId}
         )
     </insert>
+
+    <select id="loadUserByUsername" resultType="account">
+        SELECT
+            id,
+            username,
+            password,
+            age,
+            roles
+        FROM account
+        WHERE username = #{username}
+    </select>
 </mapper>
