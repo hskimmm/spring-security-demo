@@ -34,7 +34,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="link_btn hover" th:each="user:${users}">
+        <tr class="link_btn hover" th:each="user:${userList}">
             <td style="text-align: left;">
                 <a th:href="@{'/admin/users/' + ${user.id}}" class="text-white">
                     <h6 th:text="${user.username}">회원</h6>
@@ -44,9 +44,7 @@
                 <h6 style="color:#ffffff" th:text="${user.age}">나이</h6>
             </td>
             <td style="text-align: left;">
-                <span th:each="role,iter:${user.userRoles}">
-                    <h6 style="color:#ffffff" th:text="${role.roleName}"></h6>
-                </span>
+                <h6 style="color:#ffffff" th:text="${user.roles}"></h6>
             </td>
         </tr>
         </tbody>

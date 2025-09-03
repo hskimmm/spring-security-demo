@@ -1,4 +1,4 @@
-package org.spring.springsecuritydemo.service.admin;
+package org.spring.springsecuritydemo.service.admin.admin;
 
 import org.springframework.stereotype.Service;
 
