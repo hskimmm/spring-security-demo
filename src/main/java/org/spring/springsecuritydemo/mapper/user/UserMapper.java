@@ -15,4 +15,6 @@ public interface UserMapper {
     void roleLogInsert(@Param(value = "accountId") Long accountId, @Param(value = "roleId") Long roleId);
 
     Account loadUserByUsername(String username);
+
+    void roleLogUpdate(@Param(value = "accountId") Long accountId, @Param(value = "roleId") Long roleId);
 }

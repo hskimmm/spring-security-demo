@@ -55,4 +55,10 @@
         FROM account
         WHERE username = #{username}
     </select>
+
+    <update id="roleLogUpdate">
+        UPDATE account_roles SET
+            role_id = #{roleId}
+        WHERE account_id = #{accountId}
+    </update>
 </mapper>

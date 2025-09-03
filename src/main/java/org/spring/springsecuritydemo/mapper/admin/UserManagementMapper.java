@@ -10,4 +10,8 @@ public interface UserManagementMapper {
     List<Account> getUsers();
 
     Account getUser(String id);
+
+    void updateUser(Account account);
+
+    String getPassword(Long id);
 }

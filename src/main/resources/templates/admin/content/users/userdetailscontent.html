@@ -1,25 +1,27 @@
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 <div class="tbl_wrp">
-  <form class="form-horizontal form-custom" th:action="@{/admin/users}" method="post" th:object="${user}">
+  <form class="form-horizontal form-custom" id="actionForm" th:object="${user}">
     <input type="hidden" th:field="*{id}" />
 
     <div class="form-group">
       <label for="username" class="col-sm-2 control-label">아이디</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control input-large" th:field="*{username}" placeholder="username" required>
+        <input type="text" class="form-control input-large" id="username" th:field="*{username}" placeholder="username" required>
       </div>
     </div>
 
     <div class="form-group">
       <label for="password" class="col-sm-2 control-label">비밀번호</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control input-large" th:name="password" placeholder="password" required>
+        <input type="text" class="form-control input-large" id="password" th:name="password" placeholder="password" required>
       </div>
     </div>
 
     <div class="form-group">
       <label for="age" class="col-sm-2 control-label">나이</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control input-large" th:field="*{age}" placeholder="age" required>
+        <input type="text" class="form-control input-large" id="age" th:field="*{age}" placeholder="age" required>
       </div>
     </div>
 
@@ -35,9 +37,114 @@
 
     <div class="form-group">
       <div class="col-sm-offset-1 col-sm-10">
-        <button type="Submit" class="btn btn-dark btn-lg">등록</button>
+        <button type="Submit" class="btn btn-dark btn-lg" id="updateBtn">수정</button>
         <a class="btn btn-dark btn-lg" th:href="@{/admin/users}">목록</a>
       </div>
     </div>
   </form>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const csrfToken = $("meta[name='_csrf']").attr('content');
+  const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+  const form = $("#actionForm");
+
+  const userId = $("input[name='id']").val();
+
+  //이벤트 처리
+  function addButtonEvent() {
+    $("#updateBtn").on("click", function (e) {
+      e.preventDefault();
+      updateUser();
+    });
+  }
+
+  //회원 정보 수정
+  function updateUser() {
+    const formData = new FormData(form[0]);
+
+    if (validateInputCheck(formData)) {
+      $.ajax({
+        url: '/admin/users',
+        method: 'PUT',
+        data: formData,
+        processData:  false,
+        contentType: false,
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader(csrfHeader, csrfToken)
+        },
+        success: function (response) {
+          if (response.success) {
+            alert(response.message);
+            window.location.href = `/admin/users/${userId}`
+          }
+        },
+        error: function (xhr, status, error) {
+          let response;
+          console.log(xhr.status);
+          try {
+            response = JSON.parse(xhr.responseText);
+          } catch (e) {
+            alert("응답 데이터 처리 중 오류가 발생하였습니다");
+            return e;
+          }
+
+          let errorMessage = response.message;
+
+          if (xhr.status === 400) {
+            let errors = response.items;
+
+            if (errors['id']) {
+              alert(errors['id']);
+              return false;
+            } else if (errors['username']) {
+              alert(errors['username']);
+              return false;
+            } else if (errors['age']) {
+              alert(errors['age']);
+              return false;
+            } else if (errors['roles']) {
+              alert(errors['roles']);
+              return false;
+            }
+          } else if (xhr.status === 422) {
+            alert(errorMessage);
+            $("#password").focus();
+          } else if (xhr.status === 500) {
+            alert(errorMessage);
+          }
+        }
+      });
+    }
+  }
+
+  //유효성 검사
+  function validateInputCheck(formData) {
+    for (const [key, value] of formData.entries()) {
+      let trimmedValue = value.trim();
+
+      if (value !== trimmedValue) {
+        formData.set(key, trimmedValue);
+      }
+
+      if (key === 'username' && trimmedValue === '') {
+        alert("아이디를 입력하세요");
+        $("#username").focus();
+        return false;
+      }
+
+      if (key === 'age' && trimmedValue === '') {
+        alert("나이를 입력하세요");
+        $("#age").focus();
+        return false;
+      }
+    }
+    return true;
+  }
+
+  //init
+  $(function () {
+    addButtonEvent();
+  });
+</script>

@@ -23,4 +23,19 @@
         FROM account
         WHERE id = #{id}
     </select>
+
+    <update id="updateUser">
+        UPDATE account SET
+            username = #{username},
+            password = #{password},
+            age = #{age},
+            roles = #{roles}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getPassword" resultType="String">
+        SELECT password
+        FROM account
+        WHERE id = #{id}
+    </select>
 </mapper>
