@@ -28,8 +28,6 @@
     <thead>
     <tr class="table-info">
       <th scope="col">권한명</th>
-      <th scope="col">권한설명</th>
-      <th scope="col">표현식여부</th>
     </tr>
     </thead>
     <tbody>
@@ -37,8 +35,6 @@
       <td style="text-align: left;">
         <a th:href="@{'/admin/roles/' + ${role.id}}" class="text-white" th:text="${role.roleName}">회원></a>
       </td>
-      <td style="color:#ffffff" th:text="${role.roleDesc}"></td>
-      <td style="color:#ffffff" th:text="${role.isExpression}"></td>
     </tr>
     </tbody>
   </table>

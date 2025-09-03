@@ -9,4 +9,12 @@
             role_name as roleName
         FROM role
     </select>
+
+    <select id="getRole" resultType="role">
+        SELECT
+            id,
+            role_name as roleName
+        FROM role
+        WHERE id = #{id}
+    </select>
 </mapper>

@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface RoleMapper {
     List<Role> getRoles();
+
+    Role getRole(Long id);
 }

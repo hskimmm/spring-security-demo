@@ -30,4 +30,18 @@ public class RoleServiceImpl implements RoleService{
             throw new RuntimeException("권한 목록 조회 중 오류가 발생하였습니다");
         }
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Role getRole(Long id) {
+        try {
+            return roleMapper.getRole(id);
+        } catch (DataAccessException e) {
+            log.error("권한 상세 조회(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("권한 상세 조회 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("권한 상세 조회(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("권한 상세 조회 중 오류가 발생하였습니다");
+        }
+    }
 }
