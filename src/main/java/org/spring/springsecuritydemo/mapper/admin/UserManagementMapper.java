@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface UserManagementMapper {
     List<Account> getUsers();
+
+    Account getUser(String id);
 }

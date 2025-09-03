@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.spring.springsecuritydemo.mapper.admin.UserManagementMapper">
-    <select id="getUsers">
+    <select id="getUsers" resultType="account">
         SELECT
             id,
             username,
@@ -11,5 +11,16 @@
             age,
             roles
         FROM account
+    </select>
+
+    <select id="getUser" resultType="account">
+        SELECT
+            id,
+            username,
+            password,
+            age,
+            roles
+        FROM account
+        WHERE id = #{id}
     </select>
 </mapper>

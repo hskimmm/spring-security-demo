@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface UserManagementService {
     List<Account> getUsers();
+
+    Account getUser(String id);
 }
