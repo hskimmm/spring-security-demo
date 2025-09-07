@@ -1,0 +1,82 @@
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+<div class="tbl_wrp">
+  <form class="form-horizontal form-custom" id="actionForm">
+    <div class="form-group">
+      <label for="roleName" class="col-sm-2 control-label">권한명</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control input-large" id="roleNameInput" placeholder="권한명">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-1 col-sm-10">
+        <button type="Submit" class="btn btn-dark btn-lg" id="createBtn">등록</button>
+        <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/roles}">목록</a>
+      </div>
+    </div>
+  </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const csrfToken = $("meta[name='_csrf']").attr('content');
+  const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+  //이벤트 처리
+  function addButtonEvent() {
+    $("#createBtn").on("click", function (e) {
+      e.preventDefault();
+      createRole();
+    });
+  }
+
+  //권한 등록
+  function createRole() {
+    let roleValue = $("#roleNameInput").val().trim();
+    if (roleValue === '') {
+      alert("추가할 권한을 입력하세요");
+      $("#roleNameInput").focus();
+      return false;
+    }
+
+    $.ajax({
+      url: '/admin/roles',
+      method: 'POST',
+      data: JSON.stringify(roleValue),
+      contentType: 'application/json',
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader(csrfHeader, csrfToken)
+      },
+      success: function (response) {
+        if (response.success) {
+          alert(response.message);
+          window.location.href = '/admin/roles';
+        }
+      },
+      error: function (xhr, status, error) {
+        let response;
+
+        try {
+          response = JSON.parse(xhr.responseText);
+        } catch (e) {
+          alert("응답 데이터 처리 중 오류가 발생하였습니다");
+          return e;
+        }
+
+        let errorMessage = response.message;
+        if (xhr.status === 400) {
+          let errors = response.items;
+          if (errors['roleName']) {
+            alert(errors['roleName']);
+          }
+        } else if (xhr.status === 500) {
+          alert(errorMessage);
+        }
+      }
+    });
+  }
+
+  //init
+  $(function () {
+    addButtonEvent();
+  });
+</script>

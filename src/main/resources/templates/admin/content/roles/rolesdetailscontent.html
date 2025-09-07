@@ -1,3 +1,5 @@
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 <div class="tbl_wrp">
   <form class="form-horizontal form-custom" th:action="@{/admin/roles}" method="post" th:object="${role}">
     <input type="hidden" th:field="*{id}" />
@@ -17,3 +19,16 @@
     </div>
   </form>
 </div>
+<script>
+  const csrfToken = $("meta[name='_csrf']").attr('content');
+  const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+  //이벤트 처리
+  function addButtonEvent() {
+  }
+
+  //init
+  $(function () {
+    addButtonEvent();
+  });
+</script>

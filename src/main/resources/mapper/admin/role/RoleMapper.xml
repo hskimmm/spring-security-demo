@@ -17,4 +17,15 @@
         FROM role
         WHERE id = #{id}
     </select>
+
+    <insert id="createRole">
+        INSERT INTO role
+        (
+            role_name
+        )
+        VALUES
+        (
+            #{roleName}
+        )
+    </insert>
 </mapper>

@@ -10,4 +10,6 @@ public interface RoleMapper {
     List<Role> getRoles();
 
     Role getRole(Long id);
+
+    void createRole(Role role);
 }
