@@ -59,4 +59,11 @@ public class RoleController {
         ApiResponse<?> response = roleService.updateRole(updateRoleDTO);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<?>> deleteRole(@PathVariable(value = "id") Long id) {
+        ApiResponse<?> response = roleService.deleteRole(id);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -53,6 +53,14 @@ public class GlobalExceptionHandler {
     }
 
     @Order(4)
+    @ExceptionHandler(RoleIdNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleRoleIdNotFoundException(RoleIdNotFoundException e) {
+        log.info("GlobalExceptionHandler(handleRoleIdNotFoundException)");
+        ApiResponse<?> response = new ApiResponse<>(false, e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @Order(5)
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<?>> handleRuntimeException(RuntimeException e) {
         log.info("GlobalExceptionHandler(handleRuntimeException)");
@@ -60,7 +68,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
-    @Order(5)
+    @Order(6)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleException(Exception e) {
         log.info("GlobalExceptionHandler(handleException)");

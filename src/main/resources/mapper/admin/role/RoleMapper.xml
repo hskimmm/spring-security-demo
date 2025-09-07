@@ -34,4 +34,9 @@
             role_name = #{roleName}
         WHERE id = #{id}
     </update>
+
+    <delete id="deleteRole">
+        DELETE FROM role
+        WHERE id = #{id}
+    </delete>
 </mapper>

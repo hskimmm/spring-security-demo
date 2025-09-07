@@ -16,4 +16,6 @@ public interface RoleService {
     ApiResponse<?> createRole(CreateRoleDTO createRoleDTO);
 
     ApiResponse<?> updateRole(@Valid UpdateRoleDTO updateRoleDTO);
+
+    ApiResponse<?> deleteRole(@Valid Long id);
 }

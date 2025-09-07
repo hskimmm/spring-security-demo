@@ -14,7 +14,7 @@
       <div class="col-sm-offset-1 col-sm-10">
         <button type="Submit" class="btn btn-dark btn-lg" id="updateBtn">수정</button>
         <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/roles}">목록</a>
-        <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{'/admin/roles/delete/' + *{id}}">삭제</a>
+        <a class="btn btn-dark btn-lg" style="margin:10px;" id="deleteBtn">삭제</a>
       </div>
     </div>
   </form>
@@ -31,6 +31,11 @@
     $("#updateBtn").on("click", function (e) {
       e.preventDefault();
       updateRole();
+    });
+
+    $("#deleteBtn").on("click", function (e) {
+      e.preventDefault();
+      deleteRole();
     });
   }
 
@@ -87,6 +92,44 @@
         }
       }
     });
+  }
+
+  //권한 삭제
+  function deleteRole() {
+    if (confirm("권한을 삭제하시겠습니까?")) {
+      $.ajax({
+        url: `/admin/roles/${roleId}`,
+        method: 'DELETE',
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader(csrfHeader, csrfToken)
+        },
+        success: function (response) {
+          if (response.success) {
+            alert(response.message);
+            window.location.href = '/admin/roles';
+          }
+        },
+        error: function (xhr, status, error) {
+          let response;
+
+          try {
+            response = JSON.parse(xhr.responseText);
+          } catch (e) {
+            alert("응답 데이터 처리 중 오류가 발생하였습니다");
+            return e;
+          }
+
+          let errorMessage = response.message;
+          if (xhr.status === 404) {
+            alert(errorMessage);
+            return false;
+          } else if (xhr.status === 500) {
+            alert(errorMessage);
+            return false;
+          }
+        }
+      });
+    }
   }
 
   //init
