@@ -28,4 +28,10 @@
             #{roleName}
         )
     </insert>
+
+    <update id="updateRole">
+        UPDATE role SET
+            role_name = #{roleName}
+        WHERE id = #{id}
+    </update>
 </mapper>

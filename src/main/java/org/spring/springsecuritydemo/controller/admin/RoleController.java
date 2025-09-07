@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.spring.springsecuritydemo.domain.Role;
 import org.spring.springsecuritydemo.dto.CreateRoleDTO;
+import org.spring.springsecuritydemo.dto.UpdateRoleDTO;
 import org.spring.springsecuritydemo.response.ApiResponse;
 import org.spring.springsecuritydemo.service.admin.role.RoleService;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,13 @@ public class RoleController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<?>> createRole(@Valid @RequestBody CreateRoleDTO createRoleDTO) {
         ApiResponse<?> response = roleService.createRole(createRoleDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<?>> updateRole(@Valid @RequestBody UpdateRoleDTO updateRoleDTO) {
+        ApiResponse<?> response = roleService.updateRole(updateRoleDTO);
         return ResponseEntity.ok(response);
     }
 }

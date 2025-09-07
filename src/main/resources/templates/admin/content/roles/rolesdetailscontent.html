@@ -1,30 +1,92 @@
 <meta name="_csrf" th:content="${_csrf.token}"/>
 <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 <div class="tbl_wrp">
-  <form class="form-horizontal form-custom" th:action="@{/admin/roles}" method="post" th:object="${role}">
+  <form class="form-horizontal form-custom" th:object="${role}">
     <input type="hidden" th:field="*{id}" />
 
     <div class="form-group">
       <label for="roleName" class="col-sm-2 control-label">권한명</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control input-large" th:field="*{roleName}" placeholder="권한명">
+        <input type="text" class="form-control input-large" name="roleName" th:field="*{roleName}" placeholder="권한명">
       </div>
     </div>
     <div class="form-group">
       <div class="col-sm-offset-1 col-sm-10">
-        <button type="Submit" class="btn btn-dark btn-lg">수정</button>
+        <button type="Submit" class="btn btn-dark btn-lg" id="updateBtn">수정</button>
         <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/roles}">목록</a>
         <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{'/admin/roles/delete/' + *{id}}">삭제</a>
       </div>
     </div>
   </form>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   const csrfToken = $("meta[name='_csrf']").attr('content');
   const csrfHeader = $("meta[name='_csrf_header']").attr('content');
 
+  const roleId = $("#id").val();
+
   //이벤트 처리
   function addButtonEvent() {
+    $("#updateBtn").on("click", function (e) {
+      e.preventDefault();
+      updateRole();
+    });
+  }
+
+  //권한 업데이트
+  function updateRole() {
+    let roleValue = $("input[name='roleName']").val().trim();
+    if (roleValue === '') {
+      alert("수정할 권한을 입력하세요");
+      $("input[name='roleName']").focus();
+      return false;
+    }
+
+    const data = {
+      id : roleId,
+      roleName : roleValue
+    }
+
+    $.ajax({
+      url: '/admin/roles',
+      method: 'PUT',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader(csrfHeader, csrfToken)
+      },
+      success: function (response) {
+        if (response.success) {
+          alert(response.message);
+          window.location.href = `/admin/roles/${roleId}`
+        }
+      },
+      error: function (xhr, status, error) {
+        let response;
+
+        try {
+          response = JSON.parse(xhr.responseText);
+        } catch (e) {
+          alert("응답 데이터 처리 중 오류가 발생하였습니다");
+          return e;
+        }
+
+        let errorMessage = response.message;
+        if (xhr.status === 400) {
+          let errors = response.items;
+          if (errors['roleName']) {
+            alert(errors['roleName']);
+            return false;
+          } else if (errors['id']) {
+            alert(errors['id']);
+            return false;
+          }
+        } else if (xhr.status === 500) {
+          alert(errorMessage);
+        }
+      }
+    });
   }
 
   //init

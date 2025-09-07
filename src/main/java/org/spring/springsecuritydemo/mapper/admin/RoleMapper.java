@@ -12,4 +12,6 @@ public interface RoleMapper {
     Role getRole(Long id);
 
     void createRole(Role role);
+
+    void updateRole(Role role);
 }
