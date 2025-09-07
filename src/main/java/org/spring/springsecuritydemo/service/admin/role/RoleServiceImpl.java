@@ -2,18 +2,17 @@ package org.spring.springsecuritydemo.service.admin.role;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.spring.springsecuritydemo.domain.Role;
 import org.spring.springsecuritydemo.dto.CreateRoleDTO;
 import org.spring.springsecuritydemo.dto.UpdateRoleDTO;
 import org.spring.springsecuritydemo.exception.RoleIdNotFoundException;
 import org.spring.springsecuritydemo.mapper.admin.RoleMapper;
 import org.spring.springsecuritydemo.response.ApiResponse;
+import org.spring.springsecuritydemo.util.ModelMapperUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.management.relation.RoleNotFoundException;
 import java.util.List;
 
 @Service
@@ -55,8 +54,7 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public ApiResponse<?> createRole(CreateRoleDTO createRoleDTO) {
         try {
-            ModelMapper modelMapper = new ModelMapper();
-            Role role = modelMapper.map(createRoleDTO, Role.class);
+            Role role = ModelMapperUtils.map(createRoleDTO, Role.class);
             roleMapper.createRole(role);
 
             return new ApiResponse<>(true, "권한을 등록하였습니다");
@@ -73,8 +71,7 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public ApiResponse<?> updateRole(UpdateRoleDTO updateRoleDTO) {
         try {
-            ModelMapper modelMapper = new ModelMapper();
-            Role role = modelMapper.map(updateRoleDTO, Role.class);
+            Role role = ModelMapperUtils.map(updateRoleDTO, Role.class);
             roleMapper.updateRole(role);
 
             return new ApiResponse<>(true, "권한을 수정하였습니다");
