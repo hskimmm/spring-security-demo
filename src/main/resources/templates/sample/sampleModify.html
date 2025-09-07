@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <h1 class="mt-4">GuestBook Read Page</h1>
+        <form>
+            <div class="form-group">
+                <label>gno</label>
+                <input type="text" class="form-control" name="gno" readonly>
+            </div>
+            <div class="form-group">
+                <label>title</label>
+                <input type="text" class="form-control" name="title" readonly>
+            </div>
+            <div class="form-group">
+                <label>content</label>
+                <textarea class="form-control" rows="5" name="content" readonly></textarea>
+            </div>
+            <div class="form-group">
+                <label>writer</label>
+                <input type="text" class="form-control" name="writer" readonly>
+            </div>
+            <div class="form-group">
+                <label>regDate</label>
+                <input type="text" class="form-control" name="regDate" readonly>
+            </div>
+            <div class="form-group">
+                <label>modDate</label>
+                <input type="text" class="form-control" name="modDate" readonly>
+            </div>
+        </form>
+        <button type="button" class="btn btn-primary">Modify</button>
+        <button type="button" class="btn btn-info">List</button>
+        <button type="button" class="btn btn-danger">Remove</button>
+    </th:block>
+</th:block>
