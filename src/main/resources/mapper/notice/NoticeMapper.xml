@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.spring.springsecuritydemo.mapper.notice.NoticeMapper">
+    <select id="getNotices" resultType="notice">
+        SELECT
+            a.id,
+            a.account_id AS accountId,
+            a.title,
+            a.content,
+            a.view_count AS viewCount,
+            a.created_at AS createdAt,
+            a.updated_at AS updatedAt,
+            b.username
+        FROM notice a
+        INNER JOIN account b
+        ON a.account_id = b.id
+        ORDER BY a.id DESC
+    </select>
+</mapper>

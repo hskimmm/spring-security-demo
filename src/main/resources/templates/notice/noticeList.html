@@ -4,23 +4,23 @@
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
   <th:block th:fragment="content">
     <h1>GuestBook List Page</h1>
-
     <table class="table table-striped">
       <thead>
       <tr>
-        <th scope="col">NO</th>
-        <th scope="col">Title</th>
-        <th scope="col">Writer</th>
-        <th scope="col">RegDate</th>
+        <th scope="col">번호</th>
+        <th scope="col">제목</th>
+        <th scope="col">작성자</th>
+        <th scope="col">등록일</th>
+        <th scope="col">조회수</th>
       </tr>
       </thead>
       <tbody>
-      <tr>
-        <th scope="row">
-        </th>
-        <td></td>
-        <td></td>
-        <td></td>
+      <tr th:each="notice : ${noticeList}">
+        <td th:text="${notice.id}"></td>
+        <td th:text="${notice.title}"></td>
+        <td th:text="${notice.username}"></td>
+        <td th:text="${#temporals.format(notice.createdAt, 'YYYY-mm-dd HH:mm:ss')}"></td>
+        <td th:text="${notice.viewCount}"></td>
       </tr>
       </tbody>
     </table>
