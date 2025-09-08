@@ -1,5 +1,6 @@
 package org.spring.springsecuritydemo.controller.notice;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/notice")
@@ -35,9 +38,10 @@ public class NoticeController {
     @GetMapping("/{id}")
     public String getNotice(@PathVariable(value = "id") Long id,
                             @AuthenticationPrincipal AccountDTO accountDTO,
-                            Model model) {
+                            Model model,
+                            HttpSession session) {
 
-        Notice notice = noticeService.getNotice(id);
+        Notice notice = noticeService.getNotice(id, session);
         model.addAttribute("notice", notice);
         model.addAttribute("currentUser", accountDTO.getUsername());
         return "notice/noticeRead";
@@ -59,9 +63,10 @@ public class NoticeController {
     @GetMapping("/modify/{id}")
     public String moveNoticeModifyPage(@PathVariable(value = "id") Long id,
                                        @AuthenticationPrincipal AccountDTO accountDTO,
-                                       Model model) {
+                                       Model model,
+                                       HttpSession session) {
 
-        Notice notice = noticeService.getNotice(id);
+        Notice notice = noticeService.getNotice(id, session);
         model.addAttribute("notice", notice);
         model.addAttribute("currentUser", accountDTO.getUsername());
         return "notice/noticeModify";

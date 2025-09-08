@@ -1,5 +1,6 @@
 package org.spring.springsecuritydemo.service.notice;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.spring.springsecuritydemo.domain.Notice;
@@ -13,7 +14,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -38,12 +41,27 @@ public class NoticeServiceImpl implements NoticeService{
 
     @Transactional(readOnly = true)
     @Override
-    public Notice getNotice(Long id) {
+    public Notice getNotice(Long id, HttpSession session) {
         if (id == null) {
             throw new NoticeNotFoundException("게시글이 존재하지 않습니다");
         }
 
         try {
+            //조회수 새로고침 증가 방지
+            @SuppressWarnings("unchecked")
+            Set<Long> viewedNotices = (Set<Long>) session.getAttribute("viewedNotices");
+            if (viewedNotices == null) {
+                viewedNotices = new HashSet<>();
+                session.setAttribute("viewedNotices", viewedNotices);
+            }
+
+            if (!viewedNotices.contains(id)) {
+                //조회수 증가
+                noticeMapper.incrementViewCount(id);
+                viewedNotices.add(id);
+            }
+
+
             return noticeMapper.getNotice(id);
         } catch (DataAccessException e) {
             log.error("게시글 상세 조회(데이터베이스 오류) = {}", e.getMessage());

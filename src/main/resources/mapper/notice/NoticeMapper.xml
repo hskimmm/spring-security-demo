@@ -62,4 +62,10 @@
         DELETE FROM notice
         WHERE id = #{id}
     </delete>
+
+    <update id="incrementViewCount">
+        UPDATE notice set
+            view_count = view_count +1
+        WHERE id = #{id}
+    </update>
 </mapper>
