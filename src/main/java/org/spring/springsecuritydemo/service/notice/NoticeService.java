@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface NoticeService {
     List<Notice> getNotices();
+
+    Notice getNotice(Long id);
 }

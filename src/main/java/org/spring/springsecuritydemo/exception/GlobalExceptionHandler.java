@@ -61,6 +61,14 @@ public class GlobalExceptionHandler {
     }
 
     @Order(5)
+    @ExceptionHandler(NoticeNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleNoticeNotFoundException(NoticeNotFoundException e) {
+        log.info("GlobalExceptionHandler(handleNoticeNotFoundException)");
+        ApiResponse<?> response = new ApiResponse<>(false, e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @Order(6)
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<?>> handleRuntimeException(RuntimeException e) {
         log.info("GlobalExceptionHandler(handleRuntimeException)");
@@ -68,7 +76,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
-    @Order(6)
+    @Order(7)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleException(Exception e) {
         log.info("GlobalExceptionHandler(handleException)");

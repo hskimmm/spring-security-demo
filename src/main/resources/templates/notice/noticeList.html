@@ -17,7 +17,9 @@
       <tbody>
       <tr th:each="notice : ${noticeList}">
         <td th:text="${notice.id}"></td>
-        <td th:text="${notice.title}"></td>
+        <td>
+          <a th:text="${notice.title}" th:href="@{/notice/{id}(id=${notice.id})}"></a>
+        </td>
         <td th:text="${notice.username}"></td>
         <td th:text="${#temporals.format(notice.createdAt, 'YYYY-mm-dd HH:mm:ss')}"></td>
         <td th:text="${notice.viewCount}"></td>
