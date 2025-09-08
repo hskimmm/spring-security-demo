@@ -87,4 +87,23 @@ public class NoticeServiceImpl implements NoticeService{
             throw new RuntimeException("게시글 수정 중 오류가 발생하였습니다");
         }
     }
+
+    @Transactional
+    @Override
+    public ApiResponse<?> deleteNotice(Long id) {
+        if (id == null) {
+            throw new NoticeNotFoundException("게시글이 존재하지 않습니다");
+        }
+
+        try {
+            noticeMapper.deleteNotice(id);
+            return new ApiResponse<>(true, "게시글을 삭제하였습니다");
+        } catch (DataAccessException e) {
+            log.error("게시글 삭제(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("게시글 삭제 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("게시글 삭제(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("게시글 삭제 중 오류가 발생하였습니다");
+        }
+    }
 }

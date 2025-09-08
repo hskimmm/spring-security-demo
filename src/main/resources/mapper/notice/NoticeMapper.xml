@@ -57,4 +57,9 @@
             content = #{content}
         WHERE id = #{id}
     </update>
+
+    <delete id="deleteNotice">
+        DELETE FROM notice
+        WHERE id = #{id}
+    </delete>
 </mapper>

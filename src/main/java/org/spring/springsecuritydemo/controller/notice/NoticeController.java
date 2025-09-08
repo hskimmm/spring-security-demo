@@ -64,4 +64,10 @@ public class NoticeController {
         ApiResponse<?> response = noticeService.modifyNotice(modifyNoticeDTO);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteNotice(@PathVariable(value = "id") Long id) {
+        ApiResponse<?> response = noticeService.deleteNotice(id);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -16,4 +16,6 @@ public interface NoticeService {
     ApiResponse<?> registerNotice(@Valid RegisterNoticeDTO registerNoticeDTO);
 
     ApiResponse<?> modifyNotice(@Valid ModifyNoticeDTO modifyNoticeDTO);
+
+    ApiResponse<?> deleteNotice(Long id);
 }

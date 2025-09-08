@@ -22,7 +22,7 @@
             </div>
         </form>
         <button type="button" class="btn btn-primary" id="modBtn">수정</button>
-        <button type="button" class="btn btn-danger">삭제</button>
+        <button type="button" class="btn btn-danger" id="delBtn">삭제</button>
         <a th:href="@{/notice}">
             <button type="button" class="btn btn-info">목록</button>
         </a>
@@ -40,6 +40,11 @@
                 $("#modBtn").on("click", function (e) {
                    e.preventDefault();
                    modifyNotice();
+                });
+
+                $("#delBtn").on("click", function (e) {
+                   e.preventDefault();
+                   deleteNotice();
                 });
             }
 
@@ -105,6 +110,45 @@
                            }
                        }
                     });
+                }
+            }
+
+            //게시글 삭제
+            function deleteNotice() {
+                if (confirm("게시글을 삭제하시겠습니까?")) {
+                    $.ajax({
+                        url: `/notice/${noticeId}`,
+                        method: 'DELETE',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(csrfHeader, csrfToken)
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                alert(response.message);
+                                window.location.href = '/notice';
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            let response;
+
+                            try {
+                                response = JSON.parse(xhr.responseText);
+                            } catch (e) {
+                                alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                                return e;
+                            }
+
+                            let errorMessage = response.message;
+                            if (xhr.status === 404) {
+                                alert(errorMessage);
+                                window.location.href = '/notice';
+                                return false;
+                            } else if (xhr.status === 500) {
+                                alert(errorMessage);
+                                return false;
+                            }
+                        }
+                    })
                 }
             }
 

@@ -14,4 +14,6 @@ public interface NoticeMapper {
     void registerNotice(Notice notice);
 
     void modifyNotice(Notice notice);
+
+    void deleteNotice(Long id);
 }
