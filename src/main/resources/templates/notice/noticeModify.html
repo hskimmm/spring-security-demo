@@ -21,8 +21,8 @@
                 <input type="text" class="form-control" id="username" name="username" th:value="${notice.username}" readonly>
             </div>
         </form>
-        <button type="button" class="btn btn-primary" id="modBtn">수정</button>
-        <button type="button" class="btn btn-danger" id="delBtn">삭제</button>
+        <button type="button" class="btn btn-primary" id="modBtn" th:if="${currentUser} == ${notice.username}">수정</button>
+        <button type="button" class="btn btn-danger" id="delBtn" th:if="${currentUser} == ${notice.username}">삭제</button>
         <a th:href="@{/notice}">
             <button type="button" class="btn btn-info">목록</button>
         </a>
