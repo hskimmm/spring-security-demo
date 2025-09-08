@@ -10,4 +10,6 @@ public interface NoticeMapper {
     List<Notice> getNotices();
 
     Notice getNotice(Long id);
+
+    void registerNotice(Notice notice);
 }

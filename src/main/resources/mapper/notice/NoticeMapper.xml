@@ -17,6 +17,7 @@
         INNER JOIN account b
         ON a.account_id = b.id
         ORDER BY a.id DESC
+        LIMIT 10
     </select>
 
     <select id="getNotice" resultType="notice">
@@ -34,4 +35,19 @@
         ON a.account_id = b.id
         WHERE a.id = #{id}
     </select>
+
+    <insert id="registerNotice">
+        INSERT INTO notice
+        (
+            account_id,
+            title,
+            content
+        )
+        VALUES
+        (
+            #{accountId},
+            #{title},
+            #{content}
+        )
+    </insert>
 </mapper>

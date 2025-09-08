@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <h1 class="mt-4">GuestBook Register Page</h1>
+        <form id="actionForm">
+            <input type="hidden" name="accountId" th:value="${accountId}"/>
+            <div class="form-group">
+                <label>제목</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Enter Title">
+            </div>
+            <div class="form-group">
+                <label>내용</label>
+                <textarea class="form-control" rows="5" id="content" name="content"></textarea>
+            </div>
+            <div class="form-group">
+                <label>작성자</label>
+                <input type="text" class="form-control" id="username" name="username" th:value="${username}" readonly>
+            </div>
+            <button type="submit" class="btn btn-primary" id="regBtn">등록</button>
+            <a th:href="@{/notice}">
+                <button type="button" class="btn btn-info">목록</button>
+            </a>
+        </form>
+
+        <script th:inline="javascript">
+            const csrfToken = $("meta[name='_csrf']").attr('content');
+            const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+            const actionForm = $("#actionForm");
+
+            //이벤트 처리
+            function addButtonEvent() {
+                $("#regBtn").on("click", function (e) {
+                   e.preventDefault();
+                   regNotice();
+                });
+            }
+
+            //게시글 등록
+            function regNotice() {
+                const formData = new FormData(actionForm[0]);
+
+                if (validateInputCheck(formData)) {
+                    $.ajax({
+                        url: '/notice',
+                        method: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(csrfHeader, csrfToken)
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                alert(response.message);
+                                window.location.href = '/notice';
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            let response;
+
+                            try {
+                                response = JSON.parse(xhr.responseText);
+                            } catch (e) {
+                                alert('응답 데이터 처리 중 오류가 발생하였습니다');
+                                return e;
+                            }
+
+                            let errorMessage = response.message;
+
+                            if (xhr.status === 400) {
+                                let errors = response.items;
+                                if (errors['title']) {
+                                    alert(errors['title']);
+                                    return false;
+                                } else if (errors['content']) {
+                                    alert(errors['content']);
+                                    return false;
+                                } else if (errors['username']) {
+                                    alert(errors['username']);
+                                    window.location.href = '/login';
+                                    return false;
+                                }
+                            } else if (xhr.status === 500) {
+                                alert(errorMessage);
+                            }
+                        }
+                    })
+                }
+            }
+
+            //INPUT 유효성 검사
+            function validateInputCheck(formData) {
+                for (const [key, value] of formData.entries()) {
+                    let trimmedValue = value.trim();
+                    if (value !== trimmedValue) {
+                        formData.set(key, trimmedValue);
+                    }
+
+                    if (key === 'title' && trimmedValue === '') {
+                        alert("제목을 입력하세요");
+                        $("#title").focus();
+                        return false;
+                    }
+
+                    if (key === 'content' && trimmedValue === '') {
+                        alert("내용을 입력하세요");
+                        $("#content").focus();
+                        return false;
+                    }
+
+                    if (key === 'username' && trimmedValue === '') {
+                        alert("로그인 후 이용 가능합니다.");
+                        window.location.href = '/login';
+                    }
+                }
+                return true;
+            }
+
+            //init
+            $(function () {
+               addButtonEvent();
+            });
+        </script>
+    </th:block>
+</th:block>
