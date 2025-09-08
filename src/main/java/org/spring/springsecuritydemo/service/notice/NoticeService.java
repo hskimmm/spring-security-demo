@@ -2,6 +2,7 @@ package org.spring.springsecuritydemo.service.notice;
 
 import jakarta.validation.Valid;
 import org.spring.springsecuritydemo.domain.Notice;
+import org.spring.springsecuritydemo.dto.ModifyNoticeDTO;
 import org.spring.springsecuritydemo.dto.RegisterNoticeDTO;
 import org.spring.springsecuritydemo.response.ApiResponse;
 
@@ -13,4 +14,6 @@ public interface NoticeService {
     Notice getNotice(Long id);
 
     ApiResponse<?> registerNotice(@Valid RegisterNoticeDTO registerNoticeDTO);
+
+    ApiResponse<?> modifyNotice(@Valid ModifyNoticeDTO modifyNoticeDTO);
 }

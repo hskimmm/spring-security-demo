@@ -50,4 +50,11 @@
             #{content}
         )
     </insert>
+
+    <update id="modifyNotice">
+        UPDATE notice SET
+            title = #{title},
+            content = #{content}
+        WHERE id = #{id}
+    </update>
 </mapper>

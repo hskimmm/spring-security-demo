@@ -12,4 +12,6 @@ public interface NoticeMapper {
     Notice getNotice(Long id);
 
     void registerNotice(Notice notice);
+
+    void modifyNotice(Notice notice);
 }

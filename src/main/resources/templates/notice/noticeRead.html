@@ -28,7 +28,7 @@
             <input type="text" class="form-control" name="updatedAt" th:value="${#temporals.format(notice.updatedAt, 'YYYY-mm-dd HH:mm:ss')}" readonly>
         </div>
 
-        <a href="#">
+        <a th:href="@{/notice/modify/{id}(id=${notice.id})}">
             <button type="button" class="btn btn-primary">수정</button>
         </a>
         <a th:href="@{/notice}">

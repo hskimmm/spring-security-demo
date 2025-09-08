@@ -3,6 +3,7 @@ package org.spring.springsecuritydemo.service.notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.spring.springsecuritydemo.domain.Notice;
+import org.spring.springsecuritydemo.dto.ModifyNoticeDTO;
 import org.spring.springsecuritydemo.dto.RegisterNoticeDTO;
 import org.spring.springsecuritydemo.exception.NoticeNotFoundException;
 import org.spring.springsecuritydemo.mapper.notice.NoticeMapper;
@@ -67,6 +68,23 @@ public class NoticeServiceImpl implements NoticeService{
         } catch (Exception e) {
             log.error("게시글 등록(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("게시글 등록 중 오류가 발생하였습니다");
+        }
+    }
+
+    @Transactional
+    @Override
+    public ApiResponse<?> modifyNotice(ModifyNoticeDTO modifyNoticeDTO) {
+        try {
+            Notice notice = ModelMapperUtils.map(modifyNoticeDTO, Notice.class);
+            noticeMapper.modifyNotice(notice);
+
+            return new ApiResponse<>(true, "게시글을 수정하였습니다");
+        } catch (DataAccessException e) {
+            log.error("게시글 수정(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("게시글 수정 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("게시글 수정(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("게시글 수정 중 오류가 발생하였습니다");
         }
     }
 }

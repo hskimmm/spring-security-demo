@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.spring.springsecuritydemo.domain.Notice;
 import org.spring.springsecuritydemo.dto.AccountDTO;
+import org.spring.springsecuritydemo.dto.ModifyNoticeDTO;
 import org.spring.springsecuritydemo.dto.RegisterNoticeDTO;
 import org.spring.springsecuritydemo.response.ApiResponse;
 import org.spring.springsecuritydemo.service.notice.NoticeService;
@@ -48,6 +49,19 @@ public class NoticeController {
     @PostMapping
     public ResponseEntity<ApiResponse<?>> registerNotice(@Valid @ModelAttribute RegisterNoticeDTO registerNoticeDTO) {
         ApiResponse<?> response = noticeService.registerNotice(registerNoticeDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/modify/{id}")
+    public String moveNoticeModifyPage(@PathVariable(value = "id") Long id, Model model) {
+        Notice notice = noticeService.getNotice(id);
+        model.addAttribute("notice", notice);
+        return "notice/noticeModify";
+    }
+
+    @PutMapping
+    public ResponseEntity<ApiResponse<?>> modifyNotice(@Valid @RequestBody ModifyNoticeDTO modifyNoticeDTO) {
+        ApiResponse<?> response = noticeService.modifyNotice(modifyNoticeDTO);
         return ResponseEntity.ok(response);
     }
 }
