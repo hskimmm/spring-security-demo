@@ -37,12 +37,7 @@
 
         <!--댓글 리스트 및 페이징-->
         <div class="card shadow mb-4 mt-4 ">
-            <ul class="list-group commentList">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Cras justo odio
-                    <span class="badge badge-primary badge-pill">14</span>
-                </li>
-            </ul>
+            <ul class="list-group replyList"></ul>
             <ul class="pagination mt-5 justify-content-center align-items-center">
                 <li class="page-item">
                     <a class="page-link" href="#" tabindex="-1">Previous</a>
@@ -94,5 +89,50 @@
                 </div>
             </div>
         </div>
+        <script th:inline="javascript">
+
+            const noticeId = $("input[name='id']").val();
+
+            const replyUL = $(".replyList");
+
+            //댓글 리스트 조회
+            function loadReply() {
+                $.ajax({
+                    url: `/reply/${noticeId}`,
+                    method: 'GET',
+                    success: function (response) {
+                        renderReply(response.data)
+                    },
+                    error: function (xhr, status, error) {
+                        let response;
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                            return e;
+                        }
+
+                        let errorMessage = response.message;
+                        if (xhr.status === 500) {
+                            alert(errorMessage);
+                        }
+                    }
+                });
+            }
+
+            //댓글 렌더링
+            function renderReply(data) {
+                let str = '';
+                $.each(data, function (key, value) {
+                    str += `<li class="list-group-item d-flex justify-content-between align-items-center">${value.content}<span class="badge badge-primary badge-pill">${value.username}</span></li>`;
+                });
+                replyUL.html(str);
+            }
+
+
+            $(function () {
+                loadReply();
+            })
+        </script>
     </th:block>
 </th:block>
