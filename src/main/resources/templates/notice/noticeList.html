@@ -4,6 +4,7 @@
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
   <th:block th:fragment="content">
     <h1>GuestBook List Page</h1>
+    [[${page}]]
     <table class="table table-striped">
       <thead>
       <tr>
@@ -18,7 +19,7 @@
       <tr th:each="notice : ${noticeList}">
         <td th:text="${notice.id}"></td>
         <td>
-          <a th:text="${notice.title}" th:href="@{/notice/{id}(id=${notice.id})}"></a>
+          <a th:text="${notice.title}" th:href="@{/notice/{id}(id=${notice.id}, pageNum=${cri.pageNum})}"></a>
         </td>
         <td th:text="${notice.username}"></td>
         <td th:text="${#temporals.format(notice.createdAt, 'YYYY-mm-dd HH:mm:ss')}"></td>
@@ -26,19 +27,20 @@
       </tr>
       </tbody>
     </table>
-    <a type="button" class="btn btn-primary" th:href="@{/notice/regPage}">게시글 등록</a>
+    <!--<a type="button" class="btn btn-primary" th:href="@{/notice/regPage}">게시글 등록</a>-->
+    <a type="button" class="btn btn-primary" th:href="@{/notice/regPage}" id="regMoveBtn">게시글 등록</a>
 
     <ul class="pagination h-100 justify-content-center align-items-center">
-      <li class="page-item">
-        <a class="page-link" href="#" tabindex="-1">Prev</a>
+      <li class="page-item" th:if="${page.prev}">
+        <a class="page-link" th:href="${page.startPage - 1}" tabindex="-1">Prev</a>
       </li>
 
-      <li class="page-item active">
-        <a class="page-link" href="#">1</a>
+      <li th:class="${num == page.cri.pageNum ? 'page-item active' : 'page-item'}" th:each="num : ${#numbers.sequence(page.startPage, page.endPage)}">
+        <a class="page-link" th:href="${num}">[[${num}]]</a>
       </li>
 
-      <li class="page-item">
-        <a class="page-link" href="#">Next</a>
+      <li class="page-item" th:if="${page.next}">
+        <a class="page-link" th:href="${page.endPage + 1}">Next</a>
       </li>
     </ul>
 
@@ -63,6 +65,28 @@
     </div>
 
     <script th:inline="javascript">
+      const pageUL = $(".pagination");
+
+      //클릭 이벤트
+      function addButtonEvent() {
+        pageUL.on("click", "a", function (e) {
+          e.preventDefault();
+          let pageNum = $(this).attr('href');
+          window.location.href = `/notice?pageNum=${pageNum}`;
+        });
+
+        $("#regMoveBtn").on("click", function (e) {
+          e.preventDefault();
+          const urlParams = new URLSearchParams(window.location.search);
+          const pageNum = urlParams.get('pageNum') || 1;
+          window.location.href = `/notice/regPage?pageNum=${pageNum}`;
+        });
+      }
+
+      //init
+      $(function () {
+        addButtonEvent();
+      });
     </script>
   </th:block>
 </th:block>

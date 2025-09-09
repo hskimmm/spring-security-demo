@@ -9,6 +9,7 @@ import org.spring.springsecuritydemo.dto.RegisterNoticeDTO;
 import org.spring.springsecuritydemo.exception.NoticeNotFoundException;
 import org.spring.springsecuritydemo.mapper.notice.NoticeMapper;
 import org.spring.springsecuritydemo.response.ApiResponse;
+import org.spring.springsecuritydemo.util.Criteria;
 import org.spring.springsecuritydemo.util.ModelMapperUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,9 @@ public class NoticeServiceImpl implements NoticeService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<Notice> getNotices() {
+    public List<Notice> getNotices(Criteria criteria) {
         try {
-            return noticeMapper.getNotices();
+            return noticeMapper.getNotices(criteria);
         } catch (DataAccessException e) {
             log.error("게시글 조회(데이터베이스 오류) = {}", e.getMessage());
             throw new RuntimeException("게시글 조회 중 오류가 발생하였습니다");
@@ -47,7 +48,27 @@ public class NoticeServiceImpl implements NoticeService{
         }
 
         try {
-            //조회수 새로고침 증가 방지
+            /*
+                조회수 새로고침 증가 방지
+                1.세션에서 viewedNotices 가져오기
+                    - Set<Long> viewedNotices = (Set<Long>) session.getAttribute("viewedNotices");
+
+                2.세션에 viewedNotices가 없으면 새 객체 생성 후 저장
+                    - viewedNotices = new HashSet<>();
+                    - session.setAttribute("viewedNotices", viewedNotices);
+
+                3.게시글 id 중복 확인 및 조회수 증가
+                    3-1.viewedNotices에 해당 게시글 id가 없으면:
+                        - DB 조회수 +1 (noticeMapper.incrementViewCount(id))
+                        - viewedNotices.add(id) → 세션에 id 추가
+                데이터 구조
+                Session {
+                    "viewedNotices" : HashSet<Long> {
+                        101
+                        102
+                    }
+                }
+            */
             @SuppressWarnings("unchecked")
             Set<Long> viewedNotices = (Set<Long>) session.getAttribute("viewedNotices");
             if (viewedNotices == null) {
@@ -60,7 +81,6 @@ public class NoticeServiceImpl implements NoticeService{
                 noticeMapper.incrementViewCount(id);
                 viewedNotices.add(id);
             }
-
 
             return noticeMapper.getNotice(id);
         } catch (DataAccessException e) {
@@ -122,6 +142,20 @@ public class NoticeServiceImpl implements NoticeService{
         } catch (Exception e) {
             log.error("게시글 삭제(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("게시글 삭제 중 오류가 발생하였습니다");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getTotal() {
+        try {
+            return noticeMapper.getTotal();
+        } catch (DataAccessException e) {
+            log.error("전체 게시글 수 조회(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("전체 게시글 수 조회 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("전체 게시글 수 조회(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("전체 게시글 수 조회 중 오류가 발생하였습니다");
         }
     }
 }

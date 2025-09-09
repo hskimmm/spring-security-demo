@@ -1,9 +1,11 @@
 package org.spring.springsecuritydemo.dto;
 
 import lombok.Getter;
+import lombok.ToString;
 import org.spring.springsecuritydemo.util.Criteria;
 
 @Getter
+@ToString
 public class PageDTO {
     /*
         PageDTO 클래스는 페이징의 전체적인 값을 계산하는 DTO 이다.

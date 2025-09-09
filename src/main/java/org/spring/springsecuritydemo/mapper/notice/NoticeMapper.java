@@ -2,12 +2,13 @@ package org.spring.springsecuritydemo.mapper.notice;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.spring.springsecuritydemo.domain.Notice;
+import org.spring.springsecuritydemo.util.Criteria;
 
 import java.util.List;
 
 @Mapper
 public interface NoticeMapper {
-    List<Notice> getNotices();
+    List<Notice> getNotices(Criteria criteria);
 
     Notice getNotice(Long id);
 
@@ -18,4 +19,6 @@ public interface NoticeMapper {
     void deleteNotice(Long id);
 
     void incrementViewCount(Long id);
+
+    int getTotal();
 }

@@ -23,15 +23,21 @@
         </form>
         <button type="button" class="btn btn-primary" id="modBtn" th:if="${currentUser} == ${notice.username}">수정</button>
         <button type="button" class="btn btn-danger" id="delBtn" th:if="${currentUser} == ${notice.username}">삭제</button>
-        <a th:href="@{/notice}">
+        <a th:href="@{/notice(pageNum=${cri.pageNum})}">
             <button type="button" class="btn btn-info">목록</button>
         </a>
+
+        <form id="pageForm">
+            <input type="hidden" name="pageNum" th:value="${cri.pageNum}"/>
+        </form>
+
         <script th:inline="javascript">
 
             const csrfToken = $("meta[name='_csrf']").attr('content');
             const csrfHeader = $("meta[name='_csrf_header']").attr('content');
 
             const actionForm = $("#actionForm");
+            const pageForm = $("#pageForm");
 
             const noticeId = $("input[name='id']").val();
 
@@ -72,7 +78,8 @@
                        success: function (response) {
                            if (response.success) {
                                alert(response.message);
-                               window.location.href = `/notice/${noticeId}`;
+                               pageForm.attr('action', `/notice/${noticeId}`);
+                               pageForm.submit();
                            }
                        },
                        error: function (xhr, status, error) {
@@ -125,7 +132,8 @@
                         success: function (response) {
                             if (response.success) {
                                 alert(response.message);
-                                window.location.href = '/notice';
+                                pageForm.attr('action', '/notice');
+                                pageForm.submit();
                             }
                         },
                         error: function (xhr, status, error) {

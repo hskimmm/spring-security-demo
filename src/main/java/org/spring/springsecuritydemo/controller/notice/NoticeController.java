@@ -7,37 +7,52 @@ import lombok.extern.log4j.Log4j2;
 import org.spring.springsecuritydemo.domain.Notice;
 import org.spring.springsecuritydemo.dto.AccountDTO;
 import org.spring.springsecuritydemo.dto.ModifyNoticeDTO;
+import org.spring.springsecuritydemo.dto.PageDTO;
 import org.spring.springsecuritydemo.dto.RegisterNoticeDTO;
 import org.spring.springsecuritydemo.response.ApiResponse;
 import org.spring.springsecuritydemo.service.notice.NoticeService;
+import org.spring.springsecuritydemo.util.Criteria;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/notice")
 @RequiredArgsConstructor
 @Log4j2
 public class NoticeController {
+    /*
+         - 2. 페이징
+             - Criteria 클래스 설정
+             - 쿼리에 페이징 적용
+                - 쿼리스트링으로 테스트(?pageNum=2)
+             - PageDTO 클래스 설정
+             - 전체 데이터 api 설정
+             - 프론트에서 페이징 값을 가지고 가공
+             - 페이지 번호 클릭 시 마다 해당 페이지로 이동 되게 JS 작업
+             - 페이지 이동 시 pageNum 이 같이 물려서 다닐 수 있도록 설정
 
+    */
     private final NoticeService noticeService;
 
     @GetMapping
-    public String getNotices(Model model) {
-        List<Notice> notices = noticeService.getNotices();
+    public String getNotices(@ModelAttribute(value = "cri") Criteria criteria, Model model) {
+        List<Notice> notices = noticeService.getNotices(criteria);
         model.addAttribute("noticeList", notices);
+
+        PageDTO pageDTO = new PageDTO(criteria, noticeService.getTotal());
+        model.addAttribute("page", pageDTO);
         return "notice/noticeList";
     }
 
     @GetMapping("/{id}")
     public String getNotice(@PathVariable(value = "id") Long id,
                             @AuthenticationPrincipal AccountDTO accountDTO,
+                            @ModelAttribute(value = "cri") Criteria criteria,
                             Model model,
                             HttpSession session) {
 
@@ -48,7 +63,10 @@ public class NoticeController {
     }
 
     @GetMapping("/regPage")
-    public String moveNoticeRegisterPage(@AuthenticationPrincipal AccountDTO accountDTO, Model model) {
+    public String moveNoticeRegisterPage(@AuthenticationPrincipal AccountDTO accountDTO,
+                                         @ModelAttribute(value = "cri") Criteria criteria,
+                                         Model model) {
+
         model.addAttribute("username", accountDTO.getUsername());
         model.addAttribute("accountId", accountDTO.getId());
         return "notice/noticeRegister";
@@ -63,6 +81,7 @@ public class NoticeController {
     @GetMapping("/modify/{id}")
     public String moveNoticeModifyPage(@PathVariable(value = "id") Long id,
                                        @AuthenticationPrincipal AccountDTO accountDTO,
+                                       @ModelAttribute(value = "cri") Criteria criteria,
                                        Model model,
                                        HttpSession session) {
 
