@@ -20,4 +20,10 @@ public class ReplyController {
         ApiResponse<?> response = replyService.getReplyList(id);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/read/{id}")
+    public ResponseEntity<ApiResponse<?>> getReply(@PathVariable(value = "id") Long id) {
+        ApiResponse<?> response = replyService.getReply(id);
+        return ResponseEntity.ok(response);
+    }
 }

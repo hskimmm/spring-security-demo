@@ -69,22 +69,22 @@
                     <div class="modal-body">
                         <div class="input-group input-group-lg">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">Reply Text</span>
+                                <span class="input-group-text">내용</span>
                             </div>
                             <input type="text" name="content" class="form-control">
                         </div>
                         <div class="input-group input-group-sm">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">Replyer</span>
+                                <span class="input-group-text">작성자</span>
                             </div>
-                            <input type="text" name="writer" class="form-control">
+                            <input type="text" name="username" class="form-control" readonly>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-warning" id="replyModifyBtn">Modify</button>
-                        <button type="button" class="btn btn-danger" id="replyDeleteBtn">Delete</button>
-                        <button type="button" class="btn btn-primary" id="replyRegisterBtn">Register</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="replyRegisterBtn">등록</button>
+                        <button type="button" class="btn btn-warning" id="replyModifyBtn">수정</button>
+                        <button type="button" class="btn btn-danger" id="replyDeleteBtn">삭제</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
                     </div>
                 </div>
             </div>
@@ -94,6 +94,17 @@
             const noticeId = $("input[name='id']").val();
 
             const replyUL = $(".replyList");
+
+            const commentRegModal = new bootstrap.Modal(document.getElementById('replyAddModal'));
+
+            //이벤트 처리
+            function addButtonEvent() {
+                replyUL.on("click", "li", function (e) {
+                   e.preventDefault();
+                   let replyId = $(this).data('id');
+                   loadReplyDetail(replyId);
+                });
+            }
 
             //댓글 리스트 조회
             function loadReply() {
@@ -124,14 +135,33 @@
             function renderReply(data) {
                 let str = '';
                 $.each(data, function (key, value) {
-                    str += `<li class="list-group-item d-flex justify-content-between align-items-center">${value.content}<span class="badge badge-primary badge-pill">${value.username}</span></li>`;
+                    str += `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${value.id}">${value.content}<span class="badge badge-primary badge-pill">${value.username}</span></li>`;
                 });
                 replyUL.html(str);
             }
 
+            //댓글 상세조회
+            function loadReplyDetail(replyId) {
+                $.ajax({
+                    url: `/reply/read/${replyId}`,
+                    method: 'GET',
+                    success: function (response) {
+                        const data = response.data;
+                        $("input[name='content']").val(data.content);
+                        $("input[name='username']").val(data.username);
 
+                        commentRegModal.show();
+                    },
+                    error: function (xhr, status, error) {
+                        alert("실패");
+                    }
+                })
+            }
+
+            //init
             $(function () {
                 loadReply();
+                addButtonEvent();
             })
         </script>
     </th:block>

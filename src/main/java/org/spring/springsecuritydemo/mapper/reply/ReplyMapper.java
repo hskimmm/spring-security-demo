@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface ReplyMapper {
     List<Reply> getReplyList(Long id);
+
+    Reply getReply(Long id);
 }
