@@ -59,6 +59,7 @@ public class NoticeController {
         Notice notice = noticeService.getNotice(id, session);
         model.addAttribute("notice", notice);
         model.addAttribute("currentUser", accountDTO.getUsername());
+        model.addAttribute("accountId", accountDTO.getId());
         return "notice/noticeRead";
     }
 

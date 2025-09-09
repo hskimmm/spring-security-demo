@@ -10,4 +10,6 @@ public interface ReplyMapper {
     List<Reply> getReplyList(Long id);
 
     Reply getReply(Long id);
+
+    void registerReply(Reply reply);
 }

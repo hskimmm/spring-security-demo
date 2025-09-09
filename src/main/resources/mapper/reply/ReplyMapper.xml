@@ -18,4 +18,8 @@
         on a.account_id = b.id
         WHERE a.id = #{id}
     </select>
+
+    <insert id="registerReply">
+        INSERT INTO reply ( content, notice_id, account_id ) VALUES ( #{content}, #{noticeId}, #{accountId} )
+    </insert>
 </mapper>

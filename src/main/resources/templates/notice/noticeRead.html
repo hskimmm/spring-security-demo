@@ -52,7 +52,7 @@
                 </li>
             </ul>
             <div>
-                <button type="button" class="btn btn-primary mb-3 ml-2">댓글 등록</button>
+                <button type="button" class="btn btn-primary mb-3 ml-2" id="replyRegBtn">댓글 등록</button>
             </div>
         </div>
 
@@ -67,17 +67,19 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <input type="hidden" name="replyId"/>
+                        <input type="hidden" name="accountId" th:value="${accountId}"/>
                         <div class="input-group input-group-lg">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">내용</span>
                             </div>
-                            <input type="text" name="content" class="form-control">
+                            <input type="text" id="replyContent" name="replyContent" class="form-control">
                         </div>
                         <div class="input-group input-group-sm">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">작성자</span>
                             </div>
-                            <input type="text" name="username" class="form-control" readonly>
+                            <input type="text" name="replyUsername" class="form-control" th:value="${currentUser}" readonly>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -90,6 +92,9 @@
             </div>
         </div>
         <script th:inline="javascript">
+
+            const csrfToken = $("meta[name='_csrf']").attr('content');
+            const csrfHeader = $("meta[name='_csrf_header']").attr('content');
 
             const noticeId = $("input[name='id']").val();
 
@@ -104,6 +109,23 @@
                    let replyId = $(this).data('id');
                    loadReplyDetail(replyId);
                 });
+
+                $("#replyAddModal").on("hidden.bs.modal", function (e) {
+                    e.preventDefault();
+
+                    $("input[name='replyContent']").val('');
+                    $("input[name='replyUsername']").val('');
+                });
+
+                $("#replyRegBtn").on("click", function (e) {
+                   e.preventDefault();
+                   commentRegModal.show();
+                });
+
+                $("#replyRegisterBtn").on("click", function (e) {
+                   e.preventDefault();
+                   addReply();
+                });
             }
 
             //댓글 리스트 조회
@@ -112,7 +134,9 @@
                     url: `/reply/${noticeId}`,
                     method: 'GET',
                     success: function (response) {
-                        renderReply(response.data)
+                        if (response.success) {
+                            renderReply(response.data);
+                        }
                     },
                     error: function (xhr, status, error) {
                         let response;
@@ -146,16 +170,106 @@
                     url: `/reply/read/${replyId}`,
                     method: 'GET',
                     success: function (response) {
-                        const data = response.data;
-                        $("input[name='content']").val(data.content);
-                        $("input[name='username']").val(data.username);
+                        if (response.success) {
+                            const data = response.data;
+                            $("input[name='replyId']").val(data.id);
+                            $("input[name='replyContent']").val(data.content);
+                            $("input[name='replyUsername']").val(data.username);
 
-                        commentRegModal.show();
+                            commentRegModal.show();
+                        }
                     },
                     error: function (xhr, status, error) {
-                        alert("실패");
+                        let response;
+
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                        }
+
+                        let errorMessage = response.message;
+                        if (xhr.status === 500) {
+                            alert(errorMessage);
+                        }
                     }
                 })
+            }
+
+            //댓글 등록
+            function addReply() {
+                let contentValue = $("input[name='replyContent']").val().trim();
+                let usernameValue = $("input[name='replyUsername']").val().trim();
+                let accountIdValue = $("input[name='accountId']").val();
+
+                if (contentValue === '') {
+                    alert("댓글 내용을 입력하세요");
+                    $("#replyContent").focus();
+                    return false;
+                }
+
+                if (usernameValue === '') {
+                    alert("로그인 후 이용 가능합니다.");
+                    window.location.href = '/login';
+                    return false;
+                }
+
+                const data = {
+                    noticeId : noticeId,
+                    accountId : accountIdValue,
+                    content : contentValue,
+                    username : usernameValue
+                }
+
+                $.ajax({
+                    url: '/reply',
+                    method: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader(csrfHeader, csrfToken)
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            commentRegModal.hide();
+                            loadReply();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        let response;
+
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                            return e;
+                        }
+
+                        let errorMessage = response.message;
+                        if (xhr.status === 400) {
+                            let errors = response.items;
+                            if (errors['noticeId']) {
+                                alert(errors['noticeId']);
+                                return false;
+                            } else if (errors['accountId']) {
+                                alert(errors['accountId']);
+                                window.location.href = '/login';
+                                return false;
+                            } else if (errors['content']) {
+                                alert(errors['content']);
+                                return false;
+                            } else if (errors['username']) {
+                                alert(errors['username']);
+                                window.location.href = '/login';
+                                return false;
+                            }
+                        } else if (xhr.status === 500) {
+                            alert(errorMessage);
+                        }
+                    }
+
+                });
             }
 
             //init
