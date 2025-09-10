@@ -12,4 +12,6 @@ public interface ReplyMapper {
     Reply getReply(Long id);
 
     void registerReply(Reply reply);
+
+    void updateReply(Reply reply);
 }

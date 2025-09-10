@@ -22,4 +22,10 @@
     <insert id="registerReply">
         INSERT INTO reply ( content, notice_id, account_id ) VALUES ( #{content}, #{noticeId}, #{accountId} )
     </insert>
+
+    <update id="updateReply">
+        UPDATE reply SET
+            content = #{content}
+        WHERE id = #{id}
+    </update>
 </mapper>

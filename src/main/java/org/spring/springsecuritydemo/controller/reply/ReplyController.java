@@ -3,13 +3,13 @@ package org.spring.springsecuritydemo.controller.reply;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.spring.springsecuritydemo.dto.AccountDTO;
+
 import org.spring.springsecuritydemo.dto.RegisterReplyDTO;
+import org.spring.springsecuritydemo.dto.UpdateReplyDTO;
 import org.spring.springsecuritydemo.response.ApiResponse;
 import org.spring.springsecuritydemo.service.reply.ReplyService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,6 +35,12 @@ public class ReplyController {
     @PostMapping
     public ResponseEntity<ApiResponse<?>> registerReply(@Valid @RequestBody RegisterReplyDTO registerReplyDTO) {
         ApiResponse<?> response = replyService.registerReply(registerReplyDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping
+    public ResponseEntity<ApiResponse<?>> updateReply(@Valid @RequestBody UpdateReplyDTO updateReplyDTO) {
+        ApiResponse<?> response = replyService.updateReply(updateReplyDTO);
         return ResponseEntity.ok(response);
     }
 }

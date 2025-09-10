@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.spring.springsecuritydemo.domain.Reply;
 import org.spring.springsecuritydemo.dto.RegisterReplyDTO;
+import org.spring.springsecuritydemo.dto.UpdateReplyDTO;
 import org.spring.springsecuritydemo.mapper.reply.ReplyMapper;
 import org.spring.springsecuritydemo.response.ApiResponse;
 import org.spring.springsecuritydemo.util.ModelMapperUtils;
@@ -69,6 +70,23 @@ public class ReplyServiceImpl implements ReplyService{
         } catch (Exception e) {
             log.error("댓글 등록(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("댓글 등록 중 오류가 발생하였습니다");
+        }
+    }
+
+    @Transactional
+    @Override
+    public ApiResponse<?> updateReply(UpdateReplyDTO updateReplyDTO) {
+        try {
+            Reply reply = ModelMapperUtils.map(updateReplyDTO, Reply.class);
+            replyMapper.updateReply(reply);
+
+            return new ApiResponse<>(true, "댓글을 수정하였습니다");
+        } catch (DataAccessException e) {
+            log.error("댓글 수정(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 수정 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("댓글 수정(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 수정 중 오류가 발생하였습니다");
         }
     }
 }

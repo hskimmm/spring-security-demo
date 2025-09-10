@@ -126,6 +126,11 @@
                    e.preventDefault();
                    addReply();
                 });
+
+                $("#replyModifyBtn").on("click", function (e) {
+                   e.preventDefault();
+                   updateReply();
+                });
             }
 
             //댓글 리스트 조회
@@ -202,6 +207,127 @@
                 let usernameValue = $("input[name='replyUsername']").val().trim();
                 let accountIdValue = $("input[name='accountId']").val();
 
+                if (validateInputCheck(contentValue, usernameValue)) {
+                    const data = {
+                        noticeId : noticeId,
+                        accountId : accountIdValue,
+                        content : contentValue,
+                        username : usernameValue
+                    }
+
+                    $.ajax({
+                        url: '/reply',
+                        method: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: 'application/json',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(csrfHeader, csrfToken)
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                alert(response.message);
+                                commentRegModal.hide();
+                                loadReply();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            let response;
+
+                            try {
+                                response = JSON.parse(xhr.responseText);
+                            } catch (e) {
+                                alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                                return e;
+                            }
+
+                            let errorMessage = response.message;
+                            if (xhr.status === 400) {
+                                let errors = response.items;
+                                if (errors['noticeId']) {
+                                    alert(errors['noticeId']);
+                                    return false;
+                                } else if (errors['accountId']) {
+                                    alert(errors['accountId']);
+                                    window.location.href = '/login';
+                                    return false;
+                                } else if (errors['content']) {
+                                    alert(errors['content']);
+                                    return false;
+                                } else if (errors['username']) {
+                                    alert(errors['username']);
+                                    window.location.href = '/login';
+                                    return false;
+                                }
+                            } else if (xhr.status === 500) {
+                                alert(errorMessage);
+                            }
+                        }
+                    });
+                }
+            }
+
+            //댓글 수정
+            function updateReply() {
+                let replyId = $("input[name='replyId']").val();
+                let contentValue = $("input[name='replyContent']").val().trim();
+                let usernameValue = $("input[name='replyUsername']").val().trim();
+
+                if (validateInputCheck(contentValue, usernameValue)) {
+                    const data = {
+                        id : replyId,
+                        content : contentValue,
+                        username : usernameValue
+                    }
+
+                    $.ajax({
+                       url: '/reply',
+                       method: 'PUT',
+                       data: JSON.stringify(data),
+                       contentType: 'application/json',
+                       beforeSend: function (xhr) {
+                           xhr.setRequestHeader(csrfHeader, csrfToken)
+                       },
+                       success: function (response) {
+                           if (response.success) {
+                               alert(response.message);
+                               commentRegModal.hide();
+                               loadReply();
+                           }
+                       },
+                       error: function (xhr, status, error) {
+                           let response;
+
+                           try {
+                               response = JSON.parse(xhr.responseText);
+                           } catch (e) {
+                               alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                               return e;
+                           }
+
+                           let errorMessage = response.message;
+                           if (xhr.status === 400) {
+                               let errors = response.items;
+                               if (errors['id']) {
+                                   alert(errors['id']);
+                                   return false;
+                               } else if (errors['content']) {
+                                   alert(errors['content']);
+                                   return false;
+                               } else if (errors['username']) {
+                                   alert(errors['username']);
+                                   window.location.href = '/login';
+                                   return false;
+                               }
+                           } else if (xhr.status === 500) {
+                               alert(errorMessage);
+                           }
+                       }
+                    });
+                }
+            }
+
+            //INPUT 유효성 검사
+            function validateInputCheck(contentValue, usernameValue) {
                 if (contentValue === '') {
                     alert("댓글 내용을 입력하세요");
                     $("#replyContent").focus();
@@ -213,63 +339,7 @@
                     window.location.href = '/login';
                     return false;
                 }
-
-                const data = {
-                    noticeId : noticeId,
-                    accountId : accountIdValue,
-                    content : contentValue,
-                    username : usernameValue
-                }
-
-                $.ajax({
-                    url: '/reply',
-                    method: 'POST',
-                    data: JSON.stringify(data),
-                    contentType: 'application/json',
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader(csrfHeader, csrfToken)
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            alert(response.message);
-                            commentRegModal.hide();
-                            loadReply();
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        let response;
-
-                        try {
-                            response = JSON.parse(xhr.responseText);
-                        } catch (e) {
-                            alert("응답 데이터 처리 중 오류가 발생하였습니다");
-                            return e;
-                        }
-
-                        let errorMessage = response.message;
-                        if (xhr.status === 400) {
-                            let errors = response.items;
-                            if (errors['noticeId']) {
-                                alert(errors['noticeId']);
-                                return false;
-                            } else if (errors['accountId']) {
-                                alert(errors['accountId']);
-                                window.location.href = '/login';
-                                return false;
-                            } else if (errors['content']) {
-                                alert(errors['content']);
-                                return false;
-                            } else if (errors['username']) {
-                                alert(errors['username']);
-                                window.location.href = '/login';
-                                return false;
-                            }
-                        } else if (xhr.status === 500) {
-                            alert(errorMessage);
-                        }
-                    }
-
-                });
+                return true;
             }
 
             //init
