@@ -131,6 +131,11 @@
                    e.preventDefault();
                    updateReply();
                 });
+
+                $("#replyDeleteBtn").on("click", function (e) {
+                   e.preventDefault();
+                   deleteReply();
+                });
             }
 
             //댓글 리스트 조회
@@ -323,6 +328,47 @@
                            }
                        }
                     });
+                }
+            }
+
+            //댓글 삭제
+            function deleteReply() {
+                if (confirm("댓글을 삭제하시겠습니까?")) {
+                    let replyId = $("input[name='replyId']").val();
+
+                    $.ajax({
+                        url: `/reply/${replyId}`,
+                        method: 'DELETE',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(csrfHeader, csrfToken)
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                alert(response.message);
+                                commentRegModal.hide();
+                                loadReply();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            let response;
+
+                            try {
+                                response = JSON.parse(xhr.responseText);
+                            } catch (e) {
+                                alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                                return e;
+                            }
+
+                            let errorMessage = response.message;
+                            if (xhr.status === 404) {
+                                alert(errorMessage);
+                                return false;
+                            } else if (xhr.status === 500) {
+                                alert(errorMessage);
+                                return false;
+                            }
+                        }
+                    })
                 }
             }
 

@@ -28,4 +28,9 @@
             content = #{content}
         WHERE id = #{id}
     </update>
+
+    <delete id="deleteReply">
+        DELETE FROM reply
+        WHERE id = #{id}
+    </delete>
 </mapper>

@@ -43,4 +43,10 @@ public class ReplyController {
         ApiResponse<?> response = replyService.updateReply(updateReplyDTO);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteReply(@PathVariable(value = "id") Long id) {
+        ApiResponse<?> response = replyService.deleteReply(id);
+        return ResponseEntity.ok(response);
+    }
 }

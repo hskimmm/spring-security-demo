@@ -13,4 +13,6 @@ public interface ReplyService {
     ApiResponse<?> registerReply(@Valid RegisterReplyDTO registerReplyDTO);
 
     ApiResponse<?> updateReply(@Valid UpdateReplyDTO updateReplyDTO);
+
+    ApiResponse<?> deleteReply(Long id);
 }
