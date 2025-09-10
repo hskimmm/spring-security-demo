@@ -9,6 +9,7 @@
         INNER JOIN account b
         ON a.account_id = b.id
         WHERE a.notice_id = #{id}
+        LIMIT #{cri.skip}, #{cri.amount}
     </select>
 
     <select id="getReply" resultType="reply">
@@ -33,4 +34,8 @@
         DELETE FROM reply
         WHERE id = #{id}
     </delete>
+
+    <select id="getReplyTotal" resultType="int">
+        SELECT COUNT(*) FROM reply WHERE notice_id = #{id}
+    </select>
 </mapper>

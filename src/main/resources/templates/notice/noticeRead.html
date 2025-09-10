@@ -38,19 +38,7 @@
         <!--댓글 리스트 및 페이징-->
         <div class="card shadow mb-4 mt-4 ">
             <ul class="list-group replyList"></ul>
-            <ul class="pagination mt-5 justify-content-center align-items-center">
-                <li class="page-item">
-                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item active">
-                    <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-            </ul>
+            <ul class="pagination mt-5 justify-content-center align-items-center"></ul>
             <div>
                 <button type="button" class="btn btn-primary mb-3 ml-2" id="replyRegBtn">댓글 등록</button>
             </div>
@@ -100,8 +88,11 @@
             const noticeId = $("input[name='id']").val();
 
             const replyUL = $(".replyList");
+            const pageNationUL = $(".pagination");
 
             const commentRegModal = new bootstrap.Modal(document.getElementById('replyAddModal'));
+
+            let currentPageNum = 0;
 
             //이벤트 처리
             function addButtonEvent() {
@@ -137,16 +128,25 @@
                    e.preventDefault();
                    deleteReply();
                 });
+
+                pageNationUL.on("click", "a", function (e) {
+                   e.preventDefault();
+                   const pageNum = $(this).attr('href');
+                   currentPageNum = pageNum;
+                   loadReply(pageNum);
+                });
             }
 
             //댓글 리스트 조회
-            function loadReply() {
+            function loadReply(pageNumParam) {
+                const pageNum = pageNumParam || 1;
+
                 $.ajax({
-                    url: `/reply/${noticeId}`,
+                    url: `/reply/${noticeId}?pageNum=${pageNum}`,
                     method: 'GET',
                     success: function (response) {
                         if (response.success) {
-                            renderReply(response.data);
+                            renderReply(response.items);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -169,10 +169,33 @@
             //댓글 렌더링
             function renderReply(data) {
                 let str = '';
-                $.each(data, function (key, value) {
+                $.each(data.replyList, function (key, value) {
                     str += `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${value.id}">${value.content}<span class="badge badge-primary badge-pill">${value.username}</span></li>`;
                 });
                 replyUL.html(str);
+
+                //페이징
+                const page = data.page;
+                const startPage = page.startPage;
+                const endPage = page.endPage;
+                const prev = page.prev;
+                const next = page.next;
+                const pageNum = page.cri.pageNum;
+
+                let pageStr = '';
+
+                if (prev) {
+                    pageStr = `<li class="page-item"><a class="page-link" href="${startPage - 1}" tabindex="-1">Prev</a></li>`
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    pageStr += `<li class="page-item ${i === pageNum ? 'active':''}"><a class="page-link" href="${i}">${i}</a></li>`;
+                }
+
+                if (next) {
+                    pageStr += `<li class="page-item"><a class="page-link" href="${endPage + 1}">Next</a></li>`
+                }
+                pageNationUL.html(pageStr);
             }
 
             //댓글 상세조회
@@ -240,7 +263,7 @@
                             if (response.success) {
                                 alert(response.message);
                                 commentRegModal.hide();
-                                loadReply();
+                                loadReply(currentPageNum);
                             }
                         },
                         error: function (xhr, status, error) {
@@ -304,7 +327,7 @@
                            if (response.success) {
                                alert(response.message);
                                commentRegModal.hide();
-                               loadReply();
+                               loadReply(currentPageNum);
                            }
                        },
                        error: function (xhr, status, error) {
@@ -354,7 +377,7 @@
                             if (response.success) {
                                 alert(response.message);
                                 commentRegModal.hide();
-                                loadReply();
+                                loadReply(currentPageNum);
                             }
                         },
                         error: function (xhr, status, error) {
