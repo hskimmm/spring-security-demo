@@ -69,6 +69,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="replyId"/>
                         <input type="hidden" name="accountId" th:value="${accountId}"/>
+                        <input type="hidden" name="currentUser" th:value="${currentUser}"/>
                         <div class="input-group input-group-lg">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">내용</span>
@@ -119,7 +120,7 @@
 
                 $("#replyRegBtn").on("click", function (e) {
                    e.preventDefault();
-                   commentRegModal.show();
+                    commentRegModal.show();
                 });
 
                 $("#replyRegisterBtn").on("click", function (e) {
@@ -185,6 +186,13 @@
                             $("input[name='replyId']").val(data.id);
                             $("input[name='replyContent']").val(data.content);
                             $("input[name='replyUsername']").val(data.username);
+
+                            const currentUser = $("input[name='currentUser']").val();
+
+                            if (currentUser === data.username) {
+                                $("#replyModifyBtn").show();
+                                $("#replyDeleteBtn").show();
+                            }
 
                             commentRegModal.show();
                         }
@@ -390,6 +398,10 @@
 
             //init
             $(function () {
+                //버튼 초기 상태 hide
+                $("#replyModifyBtn").hide();
+                $("#replyDeleteBtn").hide();
+
                 loadReply();
                 addButtonEvent();
             })
