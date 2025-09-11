@@ -20,5 +20,5 @@ public interface NoticeMapper {
 
     void incrementViewCount(Long id);
 
-    int getTotal();
+    int getTotal(Criteria criteria);
 }

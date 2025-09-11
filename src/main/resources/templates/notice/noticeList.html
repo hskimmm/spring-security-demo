@@ -4,7 +4,22 @@
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
   <th:block th:fragment="content">
     <h1>GuestBook List Page</h1>
-    [[${page}]]
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <select class="custom-select" name="selectType">
+          <option value="">-------</option>
+          <option value="T" th:attr="selected=${cri.typeStr == 'T'}">제목</option>
+          <option value="C" th:attr="selected=${cri.typeStr == 'C'}">내용</option>
+          <option value="W" th:attr="selected=${cri.typeStr == 'W'}">작성자</option>
+          <option value="TC" th:attr="selected=${cri.typeStr == 'TC'}">제목+내용</option>
+          <option value="TCW" th:attr="selected=${cri.typeStr == 'TCW'}">제목+내용+작성자</option>
+        </select>
+      </div>
+      <input type="text" class="form-control" name="keyword" th:value="${cri.keyword}">
+      <div class="input-group-append" id="button-addon4">
+        <button type="button" class="btn btn-outline-secondary btnSearch">검색</button>
+      </div>
+    </div>
     <table class="table table-striped">
       <thead>
       <tr>
@@ -19,7 +34,7 @@
       <tr th:each="notice : ${noticeList}">
         <td th:text="${notice.id}"></td>
         <td>
-          <a th:text="${notice.title}" th:href="@{/notice/{id}(id=${notice.id}, pageNum=${cri.pageNum})}"></a>
+          <a th:text="${notice.title}" th:href="@{/notice/{id}(id=${notice.id}, pageNum=${cri.pageNum}, types=${cri.types}, keyword=${cri.keyword})}"></a>
         </td>
         <td th:text="${notice.username}"></td>
         <td th:text="${#temporals.format(notice.createdAt, 'YYYY-mm-dd HH:mm:ss')}"></td>
@@ -64,22 +79,56 @@
       </div>
     </div>
 
+    <form id="pageForm">
+      <input type="hidden" name="pageNum"/>
+      <input type="hidden" name="types" th:if="${page.cri.types != null}" th:each="type : ${page.cri.types}" th:value="${type}">
+      <input type="hidden" name="keyword" th:if="${page.cri.keyword != null}" th:value="${page.cri.keyword}">
+    </form>
+
     <script th:inline="javascript">
       const pageUL = $(".pagination");
+
+      const pageForm = $("#pageForm");
 
       //클릭 이벤트
       function addButtonEvent() {
         pageUL.on("click", "a", function (e) {
           e.preventDefault();
           let pageNum = $(this).attr('href');
-          window.location.href = `/notice?pageNum=${pageNum}`;
+          $("input[name='pageNum']").val(pageNum);
+          pageForm.attr('action', '/notice');
+          pageForm.submit();
         });
 
         $("#regMoveBtn").on("click", function (e) {
           e.preventDefault();
           const urlParams = new URLSearchParams(window.location.search);
           const pageNum = urlParams.get('pageNum') || 1;
-          window.location.href = `/notice/regPage?pageNum=${pageNum}`;
+          $("input[name='pageNum']").val(pageNum);
+          pageForm.attr('action', '/notice/regPage');
+          pageForm.submit();
+        });
+
+        $(".btnSearch").on("click", function (e) {
+          e.preventDefault();
+
+          const selectObj = $("select[name='selectType']");
+          const selectValue = selectObj.val();
+          const arr = selectValue.split("");
+
+          let str = '';
+          for (const type of arr) {
+            str += `<input type="hidden" name="types" value="${type}">`;
+          }
+
+          const keywordValue = $("input[name='keyword']").val();
+          str += `<input type="hidden" name="keyword" value="${keywordValue}">`;
+
+          str += '<input type="hidden" name="pageNum" value="1">';
+          str += `<input type="hidden" name="amount" value="10">`;
+
+          pageForm.html(str);
+          pageForm.submit();
         });
       }
 

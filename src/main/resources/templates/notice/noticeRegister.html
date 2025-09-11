@@ -19,13 +19,15 @@
                 <input type="text" class="form-control" id="username" name="username" th:value="${username}" readonly>
             </div>
             <button type="submit" class="btn btn-primary" id="regBtn">등록</button>
-            <a th:href="@{/notice(pageNum = ${cri.pageNum})}">
+            <a th:href="@{/notice(pageNum = ${cri.pageNum}, types=${cri.types}, keyword=${cri.keyword})}">
                 <button type="button" class="btn btn-info">목록</button>
             </a>
         </form>
 
         <form id="pageForm">
             <input type="hidden" name="pageNum" th:value="${cri.pageNum}"/>
+            <input type="hidden" name="types" th:if="${cri.types != null}" th:each="type : ${cri.types}" th:value="${type}">
+            <input type="hidden" name="keyword" th:if="${cri.keyword != null}" th:value="${cri.keyword}">
         </form>
 
         <script th:inline="javascript">

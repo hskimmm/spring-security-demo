@@ -25,18 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Log4j2
 public class NoticeController {
-    /*
-         - 2. 페이징
-             - Criteria 클래스 설정
-             - 쿼리에 페이징 적용
-                - 쿼리스트링으로 테스트(?pageNum=2)
-             - PageDTO 클래스 설정
-             - 전체 데이터 api 설정
-             - 프론트에서 페이징 값을 가지고 가공
-             - 페이지 번호 클릭 시 마다 해당 페이지로 이동 되게 JS 작업
-             - 페이지 이동 시 pageNum 이 같이 물려서 다닐 수 있도록 설정
 
-    */
     private final NoticeService noticeService;
 
     @GetMapping
@@ -44,7 +33,7 @@ public class NoticeController {
         List<Notice> notices = noticeService.getNotices(criteria);
         model.addAttribute("noticeList", notices);
 
-        PageDTO pageDTO = new PageDTO(criteria, noticeService.getTotal());
+        PageDTO pageDTO = new PageDTO(criteria, noticeService.getTotal(criteria));
         model.addAttribute("page", pageDTO);
         return "notice/noticeList";
     }

@@ -147,9 +147,9 @@ public class NoticeServiceImpl implements NoticeService{
 
     @Transactional(readOnly = true)
     @Override
-    public int getTotal() {
+    public int getTotal(Criteria criteria) {
         try {
-            return noticeMapper.getTotal();
+            return noticeMapper.getTotal(criteria);
         } catch (DataAccessException e) {
             log.error("전체 게시글 수 조회(데이터베이스 오류) = {}", e.getMessage());
             throw new RuntimeException("전체 게시글 수 조회 중 오류가 발생하였습니다");

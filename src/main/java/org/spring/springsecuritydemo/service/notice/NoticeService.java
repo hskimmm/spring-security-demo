@@ -21,5 +21,5 @@ public interface NoticeService {
 
     ApiResponse<?> deleteNotice(Long id);
 
-    int getTotal();
+    int getTotal(Criteria criteria);
 }
